@@ -1,22 +1,22 @@
 //Set up canvas
-var canvas = document.getElementById("canvas")
-var ctx = canvas.getContext("2d")
+const canvas = document.querySelector('canvas')
+const ctx = canvas.getContext('2d')
 
 //Get the width and height from the canvas element
-var width = canvas.width
-var height = canvas.height
+const width = canvas.width
+const height = canvas.height
 
 //Work out the width and height in blocks
-var blockSize = 10
-var widthInBlocks = width / blockSize
-var heightInBlocks = height / blockSize
+const blockSize = 10
+const widthInBlocks = width / blockSize
+const heightInBlocks = height / blockSize
 
 // Set score to 0
-var score = 0
+let score = 0
 
 // Draw the border
-var drawBorder = function () {
-    ctx.fillStyle = "Gray"
+drawBorder = function () {
+    ctx.fillStyle = 'Gray'
     ctx.fillRect(0, 0, width, blockSize)
     ctx.fillRect(0, height - blockSize, width, blockSize)
     ctx.fillRect(0, 0, blockSize, height)
@@ -24,26 +24,26 @@ var drawBorder = function () {
 }
 
 // Draw the score in the top-left corner
-var drawScore = function () {
-    ctx.font = "20px Courier"
-    ctx.fillStyle = "Black"
-    ctx.textAlign = "left"
-    ctx.textBaseline = "top"
-    ctx.fillText("Score: " + score, blockSize, blockSize)
+drawScore = function () {
+    ctx.font = '20px Courier'
+    ctx.fillStyle = 'Black'
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'top'
+    ctx.fillText('Score: ' + score, blockSize, blockSize)
 }
 
 // Clear the interval and display Game Over text
-var gameOver = function () {
+gameOver = function () {
     playing = false
-    ctx.font = "60px Courier"
-    ctx.fillStyle = "Black"
-    ctx.textAlign = "center"
-    ctx.textBaseline = "middle"
-    ctx.fillText("Game Over", width / 2, height / 2)
+    ctx.font = '45px Courier'
+    ctx.fillStyle = 'Black'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('Game Over', width / 2, height / 2)
 }
 
 // Draw a circle
-var circle = function (x, y, radius, fillCircle) {
+circle = function (x, y, radius, fillCircle) {
     ctx.beginPath()
     ctx.arc(x, y, radius, 0, Math.PI * 2, false)
     if (fillCircle) {
@@ -54,23 +54,25 @@ var circle = function (x, y, radius, fillCircle) {
 }
 
 // The Block constructor
-var Block = function (col, row) {
-    this.col = col
-    this.row = row
+class Block {
+    constructor(col, row) {
+        this.col = col
+        this.row = row
+    }
 }
 
 //Draw a square at the block's location
 Block.prototype.drawSquare = function (color) {
-    var x = this.col * blockSize
-    var y = this.row * blockSize
+    const x = this.col * blockSize
+    const y = this.row * blockSize
     ctx.fillStyle = color
     ctx.fillRect(x, y, blockSize, blockSize)
 }
 
 // Draw a circle at the block's location
 Block.prototype.drawCircle = function (color) {
-    var centerX = this.col * blockSize + blockSize / 2
-    var centerY = this.row * blockSize + blockSize / 2
+    const centerX = this.col * blockSize + blockSize / 2
+    const centerY = this.row * blockSize + blockSize / 2
     ctx.fillStyle = color
     circle(centerX, centerY, blockSize / 2, true)
 }
@@ -81,26 +83,27 @@ Block.prototype.equal = function (otherBlock) {
 }
 
 // The Snake constructor
-var Snake = function () {
-    this.segments = [
-        new Block(7, 5),
-        new Block(6, 5),
-        new Block(5, 5)
-    ]
-
-    this.direction = "right"
-    this.nextDirection = "right"
+class Snake {
+    constructor() {
+        this.segments = [
+            new Block(7, 5),
+            new Block(6, 5),
+            new Block(5, 5)
+        ]
+    this.direction = 'right'
+    this.nextDirection = 'right'
+    }
 }
 
 // Draw a square for each segment of the snake's body
-Snake.prototype.draw = function () {
-    for (var i = 0; i < this.segments.length; i++) {
+Snake.prototype.draw = function() {
+    for (let i = 0; i < this.segments.length; i++) {
         if (i === 0) {
-            this.segments[i].drawSquare("Green")
+            this.segments[i].drawSquare('Black')
         } else if (i % 2 === 0) {
-            this.segments[i].drawSquare("Blue")
+            this.segments[i].drawSquare('FireBrick')
         } else {
-            this.segments[i].drawSquare("Yellow")
+            this.segments[i].drawSquare('LightSlateGrey')
         }
     }
 }
@@ -108,18 +111,18 @@ Snake.prototype.draw = function () {
 // Create a new head and add it to the beginning of
 // the snake to move the snake in its current direction
 Snake.prototype.move = function () {
-    var head = this.segments[0]
-    var newHead
+    const head = this.segments[0]
+    let newHead
 
     this.direction = this.nextDirection
 
-    if (this.direction === "right") {
+    if (this.direction === 'right') {
         newHead = new Block(head.col + 1, head.row)
-    } else if (this.direction === "down") {
+    } else if (this.direction === 'down') {
         newHead = new Block(head.col, head.row + 1)
-    } else if (this.direction === "left") {
+    } else if (this.direction === 'left') {
         newHead = new Block(head.col - 1, head.row)
-    } else if (this.direction === "up") {
+    } else if (this.direction === 'up') {
         newHead = new Block(head.col, head.row - 1)
     }
 
@@ -140,16 +143,16 @@ Snake.prototype.move = function () {
 
 // Check if snake's new head has collided with the wall of itself
 Snake.prototype.checkCollision = function (head) {
-    var leftCollision = (head.col === 0)
-    var topCollision = (head.row === 0)
-    var rightCollision = (head.col === widthInBlocks - 1)
-    var bottomCollision = (head.row === heightInBlocks - 1)
+    const leftCollision = (head.col === 0)
+    const topCollision = (head.row === 0)
+    const rightCollision = (head.col === widthInBlocks - 1)
+    const bottomCollision = (head.row === heightInBlocks - 1)
 
-    var wallCollision = leftCollision || topCollision || rightCollision || bottomCollision
+    const wallCollision = leftCollision || topCollision || rightCollision || bottomCollision
 
-    var selfCollision = false
+    const selfCollision = false
 
-    for (var i = 0; i < this.segments.length; i++) {
+    for (let i = 0; i < this.segments.length; i++) {
         if (head.equal(this.segments[i])) {
             selfCollision = true
         }
@@ -160,13 +163,13 @@ Snake.prototype.checkCollision = function (head) {
 
 // Set the snake's next direction based on the keyboard
 Snake.prototype.setDirection = function (newDirection) {
-    if (this.direction === "up" && newDirection === "down") {
+    if (this.direction === 'up' && newDirection === 'down') {
         return
-    } else if (this.direction === "right" && newDirection === "left") {
+    } else if (this.direction === 'right' && newDirection === 'left') {
         return
-    } else if (this.direction === "down" && newDirection === "up") {
+    } else if (this.direction === 'down' && newDirection === 'up') {
         return
-    } else if (this.direction === "left" && newDirection === "right") {
+    } else if (this.direction === 'left' && newDirection === 'right') {
         return
     }
 
@@ -174,23 +177,25 @@ Snake.prototype.setDirection = function (newDirection) {
 }
 
 // The Apple constructor
-var Apple = function () {
-    this.position = new Block(10, 10)
+class Apple {
+    constructor() {
+        this.position = new Block(10, 10)
+    }
 }
 
 // Draw a circle at the apple's location
 Apple.prototype.draw = function () {
-    this.position.drawCircle("LimeGreen")
+    this.position.drawCircle('Crimson')
 }
 
 // Move the apple to a new random location
 Apple.prototype.move = function (occupiedBlocks) {
-    var randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1
-    var randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1
+    const randomCol = Math.floor(Math.random() * (widthInBlocks - 2)) + 1
+    const randomRow = Math.floor(Math.random() * (heightInBlocks - 2)) + 1
     this.position = new Block(randomCol, randomRow)
 
     // Check to see if apple has been moved to a block currently occupied by the snake
-    for (var i = 0; i < occupiedBlocks.length; i++) {
+    for (let i = 0; i < occupiedBlocks.length; i++) {
         if (this.position.equal(occupiedBlocks[i])) {
             this.move(occupiedBlocks) // Call the move method again
             return
@@ -199,14 +204,14 @@ Apple.prototype.move = function (occupiedBlocks) {
 }
 
 // Create the snake and apple objects
-var snake = new Snake()
-var apple = new Apple()
+const snake = new Snake()
+const apple = new Apple()
 
-var playing = true
-var animationTime = 90
+let playing = true
+let animationTime = 90
 
 // Create a game loop function, which will call itself using setTimeout
-var gameLoop = function () {
+const gameLoop = function () {
     ctx.clearRect(0, 0, width, height)
     drawScore()
     snake.move()
@@ -224,16 +229,16 @@ var gameLoop = function () {
 gameLoop()
 
 // Convert keycodes to directions
-var directions = {
-    37: "left",
-    38: "up",
-    39: "right",
-    40: "down"
+const directions = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down'
 }
 
 // The keyboard handler for handling directions key presses
-$("body").keydown(function (event) {
-    var newDirection = directions[event.keyCode]
+$('body').keydown(function (event) {
+    const newDirection = directions[event.keyCode]
     if (newDirection !== undefined) {
         snake.setDirection(newDirection)
     }
