@@ -2,6 +2,6 @@
 
 Simple JS game created with Canvas API
 
-Controls: ← ↑ → ↓ 
+Controls:  ← ↑ → ↓ 
 
 You can see the game by the link: https://andriishvaika.github.io/snake-game/
